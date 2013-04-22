@@ -1,13 +1,22 @@
 #include "vm.h"
 
+#include "value.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-value_t * value_create_number(int number) {
-  value_t * val = (value_t *)malloc(sizeof(value_t) + sizeof(int));
-  val->type = VT_NUMBER;
-  *(int *)val->data = number;
-  return val;
+value_t ** stack_alloc() {
+  return (value_t **) malloc(sizeof(value_t *) * 64);
+}
+
+vm_t *vm_create() {
+	vm_t *vm = (vm_t *)malloc(sizeof(vm_t));
+  vm->stack = stack_alloc();
+  vm->ip = 0;
+  vm->sp = 0;
+  vm->bp = -1;
+
+	return vm;
 }
 
 debug_print_value(value_t *val) {
@@ -19,8 +28,10 @@ debug_print_value(value_t *val) {
 
 debug_print_stack(vm_t *v) {
   printf("sp: %d\n", v->sp);
-  while(v->sp--) {
-    debug_print_value(v->stack[v->sp]);
+	int sp = v->sp;
+  while(sp--) {
+		printf("%d] ", sp); 
+    debug_print_value(v->stack[sp]);
   }
 }
 
@@ -51,6 +62,10 @@ void vm_exec(vm_t *v) {
           return;
         }
         break;
+			case OP_DUMP:
+				debug_print_stack(v);
+				break;
+				
       case OP_NOP:
         printf("OP_NOP: %d\n", bc->value);
         break;
@@ -58,31 +73,3 @@ void vm_exec(vm_t *v) {
   }
 }
 
-value_t ** stack_alloc() {
-  return (value_t **) malloc(sizeof(value_t *) * 64);
-}
-
-int main(int argc, char *argv[]) {
-  vm_t v;
-
-  v.bc = (bytecode_t *)malloc(sizeof(bytecode_t) * 4);
-  v.bc[0].opcode = OP_PUSH;
-  v.bc[0].value = 1;
-  v.bc[1].opcode = OP_CALL;
-  v.bc[1].value = 0;
-  v.bc[2].opcode = OP_POP;
-  v.bc[2].value = 0;
-  v.bc[3].opcode = OP_RET;
-  v.bc[3].value = 0;
-  v.ip = 0;
-  v.sp = 0;
-  v.bp = -1;
-
-  v.stack = stack_alloc();
-
-  vm_exec(&v);
-
-  debug_print_stack(&v);
-
-  return 0;
-}
