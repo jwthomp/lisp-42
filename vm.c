@@ -22,7 +22,13 @@ vm_t *vm_create() {
 debug_print_value(value_t *val) {
   switch(val->type) {
     case VT_NUMBER:
-      printf("number: %d\n", *(int *)val->data);
+      printf(" %d ", *(int *)val->data);
+			break;
+		case VT_CONS:
+			debug_print_value(val->cons[0]);
+			printf(" . ");
+			debug_print_value(val->cons[1]);
+			break;
   }
 }
 
@@ -32,6 +38,7 @@ debug_print_stack(vm_t *v) {
   while(sp--) {
 		printf("%d] ", sp); 
     debug_print_value(v->stack[sp]);
+		printf("\n");
   }
 }
 
@@ -64,6 +71,11 @@ void vm_exec(vm_t *v) {
         break;
 			case OP_DUMP:
 				debug_print_stack(v);
+				break;
+
+			case OP_CONS:
+				printf("OP_CONS: %d\n", bc->value);
+				v->stack[v->sp++] = value_create_cons(v->stack[v->sp--], v->stack[v->sp--]);
 				break;
 				
       case OP_NOP:

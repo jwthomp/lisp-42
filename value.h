@@ -19,5 +19,6 @@ typedef struct value_s {
 
 value_t * value_create_number(int number);
 value_t *value_create_nil();
+value_t *value_create_cons(value_t *hd, value_t *tl);
 
 #endif /* !defined(__VALUE_H_) */
