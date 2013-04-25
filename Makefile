@@ -1,2 +1,2 @@
 all:
-	gcc main.c vm.c value.c -o vlisp
+	gcc -g main.c vm.c value.c -o vlisp

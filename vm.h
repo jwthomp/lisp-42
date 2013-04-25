@@ -13,12 +13,17 @@ typedef enum {
   OP_RET,
   OP_NOP,
 	OP_CONS,
+	OP_CAR,
+	OP_CDR,
+	OP_DUP,
 	OP_DUMP
 } opcode_t;
 
+
+
 typedef struct {
-  unsigned long opcode :5;
-  long value :27;
+  unsigned long opcode;
+	value_t const * value;
 } bytecode_t;
 
 typedef struct {
@@ -27,14 +32,14 @@ typedef struct {
   int bc_len;
 
   // Stack
-  value_t **stack;
+  value_t const ** stack;
 
   // Registers
   int bp;
   int ip;
   int sp;
 
-	value_t *nil;
+	value_t const * nil;
 } vm_t;
   
 vm_t *vm_create();
