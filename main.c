@@ -14,6 +14,10 @@ int main(int argc, char *argv[]) {
 		{OP_CONS, v->nil},
 		{OP_DUP, v->nil},
 		{OP_CDR, v->nil},
+		{OP_DUP, v->nil},
+		{OP_DUP, v->nil},
+		{OP_DUMP, v->nil},
+		{OP_EQ, v->nil},
 		{OP_DUMP, v->nil},
 		{OP_RET, v->nil} 
 	}; 

@@ -34,6 +34,7 @@ debug_print_bytecode(value_t const* nil, bytecode_t *code) {
   	case OP_CAR: printf("OP_CAR: "); break;
   	case OP_CDR: printf("OP_CDR: "); break;
   	case OP_DUMP: printf("OP_DUMP: "); break;
+		case OP_EQ: printf("OP_EQ: "); break;
 		case OP_DUP: printf("OP_DUP: "); break;
 		default: printf("UNKNOWN OPCODE: "); break;
 	}
@@ -92,7 +93,8 @@ void vm_exec(vm_t *v) {
 	value_t const *cdr;
 	value_t const *car; 
 	value_t const *cons; 
-	value_t const *val;
+	value_t const *val1;
+	value_t const *val2;
 
   while(1) {
     bytecode_t *bc = &v->bc[v->ip++];
@@ -144,8 +146,17 @@ void vm_exec(vm_t *v) {
 				break;
 
 			case OP_DUP:
-				val = v->stack[v->sp - 1];
-				v->stack[v->sp++] = val;				
+				val1 = v->stack[v->sp - 1];
+				v->stack[v->sp++] = val1;				
+				break;
+
+			case OP_EQ:
+				val1 = v->stack[v->sp - 1];
+				val2 = v->stack[v->sp - 2];
+				v->sp -= 2;
+				v->stack[v->sp++] = val1 == val2 ? value_create_number(1) : value_create_number(0);
+				break;
+			
 				
       case OP_NOP:
         break;
