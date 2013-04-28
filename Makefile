@@ -1,4 +1,6 @@
-SOURCES := main.c vm.c value.c
+SOURCES := main.c vm.c 
+VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c
+SOURCES += $(VALUE_SOURCES)
 OBJECTS=${SOURCES:.c=.o}
 CC=gcc
 EXECUTABLE=vlisp
@@ -9,6 +11,7 @@ all: local
 local: CC=clang
 local: CFLAGS:=-g -c -Wall
 local: LDFLAGS= 
+local: value.h values/values.h
 local: $(SOURCES) $(EXECUTABLE)
 
 
@@ -30,6 +33,7 @@ web:
 	
 clean:
 	@echo "Cleaning..."
-	@rm -rf *.html *.bc *.s *.ll *.o vlisp
+	@rm -f *.html *.bc *.s *.ll *.o vlisp
+	@rm -f values/*.html values/*.bc values/*.s values/*.ll values/*.o
 
 .PHONY: all clean local

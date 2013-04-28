@@ -4,6 +4,7 @@
 #define __VM_H_
 
 #include "value.h"
+#include "values/process.h"
 
 typedef enum {
   OP_PUSH,
@@ -23,27 +24,12 @@ typedef enum {
 
 
 typedef struct {
-  unsigned long opcode;
-	value_t const * value;
-} bytecode_t;
-
-typedef struct {
-  // Bytecode
-  bytecode_t *bc;
-  int bc_len;
-
-  // Stack
-  value_t const ** stack;
-
-  // Registers
-  int bp;
-  int ip;
-  int sp;
-
 	value_t const * nil;
+	value_t **processes;
 } vm_t;
   
 vm_t *vm_create();
 void vm_exec(vm_t *v);
+int vm_attach_process(vm_t *v, value_t *proc);
 
 #endif /* __VM_H_ */

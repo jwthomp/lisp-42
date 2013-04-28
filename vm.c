@@ -1,26 +1,36 @@
 #include "vm.h"
 
 #include "value.h"
+#include "values/values.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_PROCESSES 64
+
 void debug_print_value(value_t const* nil, value_t const *val);
 
 
-value_t const ** stack_alloc() {
-  return (value_t const **) malloc(sizeof(value_t *) * 64);
-}
-
 vm_t *vm_create() {
 	vm_t *vm = (vm_t *)malloc(sizeof(vm_t));
-  vm->stack = stack_alloc();
-  vm->ip = 0;
-  vm->sp = 0;
-  vm->bp = -1;
 	vm->nil = value_create_nil();
+	vm->processes = (value_t **)malloc(sizeof(value_t *) * MAX_PROCESSES);
+	for (int i = 0; i < MAX_PROCESSES; i++) {
+		vm->processes[i] = (value_t *)vm->nil;
+	}
 
 	return vm;
+}
+
+int vm_attach_process(vm_t *vm, value_t *proc) {
+	for (int i = 0; i < MAX_PROCESSES; i++) {
+		if (vm->processes[i] == vm->nil) {
+			vm->processes[i] = proc;
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 
@@ -58,6 +68,9 @@ void debug_print_value(value_t const* nil, value_t const *val) {
 			debug_print_elts(nil, val);
 			printf(")");
 			break;
+		default:
+			printf("unknown");
+			break;
   }
 }
 
@@ -81,17 +94,21 @@ void debug_print_bytecode(value_t const* nil, bytecode_t *code) {
 	printf("\n");
 }
 
-void debug_print_stack(vm_t *v) {
-  printf("sp: %d\n", v->sp);
-	int sp = v->sp;
+void debug_print_stack(value_t const* nil, process_t *proc) {
+  printf("sp: %d\n", proc->sp);
+	int sp = proc->sp;
   while(sp--) {
 		printf("%d] ", sp); 
-    debug_print_value(v->nil, v->stack[sp]);
+    debug_print_value(nil, proc->stack[sp]);
 		printf("\n");
   }
 }
 
-void vm_exec(vm_t *v) {
+value_t *get_cur_proc(vm_t *vm) {
+	return vm->processes[0];
+}
+
+void vm_exec(vm_t *vm) {
 	value_t const *cdr;
 	value_t const *car; 
 	value_t const *cons; 
@@ -99,64 +116,70 @@ void vm_exec(vm_t *v) {
 	value_t const *val2;
 
   while(1) {
-    bytecode_t *bc = &v->bc[v->ip++];
+		value_t *cur_proc = get_cur_proc(vm);
+		process_t *proc = (process_t *)cur_proc->data;
 
-    printf("ip: %d ] ", v->ip);
-		debug_print_bytecode(v->nil, bc);
+    bytecode_t const *bcp = (bytecode_t const *)proc->bc->data;
+		bytecode_t bc = bcp[proc->ip++];
+
+    printf("ip: %d ] ", proc->ip);
+		debug_print_bytecode(vm->nil, &bc);
+
+		value_t const **stack = proc->stack;
 
 		
 
-    switch(bc->opcode) {
+    switch(bc.opcode) {
       case OP_PUSH:
-        v->stack[v->sp++] = bc->value;
+        stack[proc->sp++] = bc.value;
         break;
       case OP_POP:
-        v->sp--;
+        proc->sp--;
         break;
       case OP_JMP:
         break;
       case OP_CALL:
         break;
       case OP_RET:
-        if (v->bp == -1) {
+        if (proc->bp == -1) {
           return;
         }
         break;
 			case OP_DUMP:
-				debug_print_stack(v);
+				debug_print_stack(vm->nil, proc);
 				break;
 
 			case OP_CONS:
-				v->sp--;
-				cdr = v->stack[v->sp];
-				v->sp--;
-				car = v->stack[v->sp];
-				v->stack[v->sp++] = value_create_cons(car, cdr);
+				proc->sp--;
+				cdr = stack[proc->sp];
+				proc->sp--;
+				car = stack[proc->sp];
+				stack[proc->sp++] = value_create_cons(car, cdr);
 				break;
 
 			case OP_CAR:
-				v->sp--;
-				cons = v->stack[v->sp];
-				v->stack[v->sp++] = cons->cons[0];
+				proc->sp--;
+				cons = stack[proc->sp];
+				stack[proc->sp++] = cons->cons[0];
 				break;
 
 
 			case OP_CDR:
-				v->sp--;
-				cons = v->stack[v->sp];
-				v->stack[v->sp++] = cons->cons[1];
+				proc->sp--;
+				cons = stack[proc->sp];
+				stack[proc->sp++] = cons->cons[1];
 				break;
 
 			case OP_DUP:
-				val1 = v->stack[v->sp - 1];
-				v->stack[v->sp++] = val1;				
+				val1 = stack[proc->sp - 1];
+				stack[proc->sp++] = val1;				
 				break;
 
 			case OP_EQ:
-				val1 = v->stack[v->sp - 1];
-				val2 = v->stack[v->sp - 2];
-				v->sp -= 2;
-				v->stack[v->sp++] = val1 == val2 ? value_create_number(1) : value_create_number(0);
+				val1 = stack[proc->sp - 1];
+				val2 = stack[proc->sp - 2];
+				proc->sp -= 2;
+				stack[proc->sp++] = val1 == val2 ? value_create_number(1) : value_create_number(0);
 				break;
 			
 				
