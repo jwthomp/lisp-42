@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void debug_print_value(value_t const* nil, value_t const *val);
 
 
 value_t const ** stack_alloc() {
@@ -22,27 +23,8 @@ vm_t *vm_create() {
 	return vm;
 }
 
-debug_print_bytecode(value_t const* nil, bytecode_t *code) {
-	switch(code->opcode) {
-		case OP_PUSH: printf("OP_PUSH: "); break;
-		case OP_POP: printf("OP_POP: "); break;
-  	case OP_JMP: printf("OP_JMP: "); break;
-  	case OP_CALL: printf("OP_CALL: "); break;
-  	case OP_RET: printf("OP_RET: "); break;
-  	case OP_NOP: printf("OP_NOP: "); break;
-  	case OP_CONS: printf("OP_CONS: "); break;
-  	case OP_CAR: printf("OP_CAR: "); break;
-  	case OP_CDR: printf("OP_CDR: "); break;
-  	case OP_DUMP: printf("OP_DUMP: "); break;
-		case OP_EQ: printf("OP_EQ: "); break;
-		case OP_DUP: printf("OP_DUP: "); break;
-		default: printf("UNKNOWN OPCODE: "); break;
-	}
-	debug_print_value(nil, code->value);
-	printf("\n");
-}
 
-debug_print_elts(value_t const* nil, value_t const *val) {
+void debug_print_elts(value_t const* nil, value_t const *val) {
 	if(val == nil) {
 		return;
 	}
@@ -65,7 +47,7 @@ debug_print_elts(value_t const* nil, value_t const *val) {
 	debug_print_elts(nil, val->cons[1]);
 }
 
-debug_print_value(value_t const* nil, value_t const *val) {
+void debug_print_value(value_t const* nil, value_t const *val) {
 
   switch(val->type) {
     case VT_NUMBER:
@@ -79,7 +61,27 @@ debug_print_value(value_t const* nil, value_t const *val) {
   }
 }
 
-debug_print_stack(vm_t *v) {
+void debug_print_bytecode(value_t const* nil, bytecode_t *code) {
+	switch(code->opcode) {
+		case OP_PUSH: printf("OP_PUSH: "); break;
+		case OP_POP: printf("OP_POP: "); break;
+  	case OP_JMP: printf("OP_JMP: "); break;
+  	case OP_CALL: printf("OP_CALL: "); break;
+  	case OP_RET: printf("OP_RET: "); break;
+  	case OP_NOP: printf("OP_NOP: "); break;
+  	case OP_CONS: printf("OP_CONS: "); break;
+  	case OP_CAR: printf("OP_CAR: "); break;
+  	case OP_CDR: printf("OP_CDR: "); break;
+  	case OP_DUMP: printf("OP_DUMP: "); break;
+		case OP_EQ: printf("OP_EQ: "); break;
+		case OP_DUP: printf("OP_DUP: "); break;
+		default: printf("UNKNOWN OPCODE: "); break;
+	}
+	debug_print_value(nil, code->value);
+	printf("\n");
+}
+
+void debug_print_stack(vm_t *v) {
   printf("sp: %d\n", v->sp);
 	int sp = v->sp;
   while(sp--) {

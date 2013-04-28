@@ -44,5 +44,6 @@ typedef struct {
 } vm_t;
   
 vm_t *vm_create();
+void vm_exec(vm_t *v);
 
 #endif /* __VM_H_ */
