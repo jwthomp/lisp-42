@@ -68,6 +68,9 @@ void debug_print_value(value_t const* nil, value_t const *val) {
 			debug_print_elts(nil, val);
 			printf(")");
 			break;
+		case VT_SYMBOL:
+			printf("#%s", (char const *)val->data);
+			break;
 		default:
 			printf("unknown");
 			break;
@@ -87,6 +90,7 @@ void debug_print_bytecode(value_t const* nil, bytecode_t *code) {
   	case OP_CDR: printf("OP_CDR: "); break;
   	case OP_DUMP: printf("OP_DUMP: "); break;
 		case OP_EQ: printf("OP_EQ: "); break;
+		case OP_BIND: printf("OP_BIND: "); break;
 		case OP_DUP: printf("OP_DUP: "); break;
 		default: printf("UNKNOWN OPCODE: "); break;
 	}
@@ -168,6 +172,12 @@ void vm_exec(vm_t *vm) {
 				proc->sp--;
 				cons = stack[proc->sp];
 				stack[proc->sp++] = cons->cons[1];
+				break;
+
+			case OP_BIND:
+				val1 = stack[proc->sp - 1];
+				val2 = stack[proc->sp - 2];
+				proc->sp -= 2;
 				break;
 
 			case OP_DUP:

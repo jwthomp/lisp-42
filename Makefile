@@ -1,5 +1,5 @@
 SOURCES := main.c vm.c 
-VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c
+VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c values/symbol.c
 SOURCES += $(VALUE_SOURCES)
 OBJECTS=${SOURCES:.c=.o}
 CC=gcc

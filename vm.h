@@ -18,6 +18,7 @@ typedef enum {
 	OP_CDR,
 	OP_DUP,
 	OP_EQ,
+	OP_BIND,
 	OP_DUMP
 } opcode_t;
 
