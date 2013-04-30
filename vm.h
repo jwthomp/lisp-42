@@ -32,4 +32,6 @@ vm_t *vm_create();
 void vm_exec(vm_t *v);
 int vm_attach_process(vm_t *v, value_t *proc);
 
+void debug_print_value(value_t const *val);
+
 #endif /* __VM_H_ */

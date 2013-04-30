@@ -24,4 +24,9 @@ typedef struct {
 } process_t;
   
 
+value_t const *process_add_symbol(value_t *process, value_t const* symbol);
+value_t const *process_create_symbol(value_t *process, char const *name);
+
+void process_print_symbols(value_t *process);
+
 #endif /* __PROCESS_H_ */

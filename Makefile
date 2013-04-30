@@ -1,4 +1,4 @@
-SOURCES := main.c vm.c process.c
+SOURCES := main.c vm.c
 VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c values/symbol.c values/string.c
 SOURCES += $(VALUE_SOURCES)
 OBJECTS=${SOURCES:.c=.o}

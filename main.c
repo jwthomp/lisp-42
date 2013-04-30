@@ -1,12 +1,13 @@
 #include "vm.h"
 #include "values/values.h"
-#include "process.h"
+#include "values/process.h"
 
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
 	vm_t *v = vm_create(); 
 	value_t const *nil = value_create_nil();
+
 
 	bytecode_t bt[] = { 
 	// Those are symbols
@@ -18,6 +19,7 @@ int main(int argc, char *argv[]) {
 		{OP_RET, nil} 
 	}; 
 
+
 	int bc_len = 17;
 	value_t const *bc = value_create_bytecode(bt, bc_len);
 	printf("bc: %p len: %d\n", bc, bc_len);
@@ -26,10 +28,15 @@ int main(int argc, char *argv[]) {
 	printf("proc: %p\n", proc);
 
 	process_create_symbol(proc, "nil");
+	process_create_symbol(proc, "+");
+	process_create_symbol(proc, "-");
+
 
 	vm_attach_process(v, proc);
 
 	vm_exec(v);
+
+	process_print_symbols(proc);
 
 	// debug_print_stack(&v); 
 	return 0;
