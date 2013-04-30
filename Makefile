@@ -1,5 +1,5 @@
-SOURCES := main.c vm.c 
-VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c values/symbol.c
+SOURCES := main.c vm.c process.c
+VALUE_SOURCES := values/cons.c values/number.c values/nil.c values/process.c values/bytecode.c values/symbol.c values/string.c
 SOURCES += $(VALUE_SOURCES)
 OBJECTS=${SOURCES:.c=.o}
 CC=gcc
@@ -11,7 +11,7 @@ all: local
 local: CC=clang
 local: CFLAGS:=-g -c -Wall
 local: LDFLAGS= 
-local: value.h values/values.h
+local: value.h values/values.h vm.h
 local: $(SOURCES) $(EXECUTABLE)
 
 

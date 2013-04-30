@@ -9,6 +9,7 @@ typedef enum {
 	VT_CONS, 
 	VT_PROCESS,
 	VT_BYTECODE,
+	VT_STRING,
 } value_type_t;
 
 typedef struct value_s {
@@ -21,6 +22,7 @@ typedef struct value_s {
 		struct value_s const *cons[0]; 
 	};
 } value_t;
+
 
 
 #endif /* !defined(__VALUE_H_) */

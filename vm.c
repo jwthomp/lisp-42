@@ -8,15 +8,20 @@
 
 #define MAX_PROCESSES 64
 
-void debug_print_value(value_t const* nil, value_t const *val);
+void debug_print_value(value_t const *val);
 
+static value_t const *nil = (value_t const *)0;
 
 vm_t *vm_create() {
+	// JWT: This should get moved to a vlisp init at some point
+	if (nil == 0) {
+		nil = value_create_nil();
+	}
+
 	vm_t *vm = (vm_t *)malloc(sizeof(vm_t));
-	vm->nil = value_create_nil();
 	vm->processes = (value_t **)malloc(sizeof(value_t *) * MAX_PROCESSES);
 	for (int i = 0; i < MAX_PROCESSES; i++) {
-		vm->processes[i] = (value_t *)vm->nil;
+		vm->processes[i] = (value_t *)nil;
 	}
 
 	return vm;
@@ -24,7 +29,7 @@ vm_t *vm_create() {
 
 int vm_attach_process(vm_t *vm, value_t *proc) {
 	for (int i = 0; i < MAX_PROCESSES; i++) {
-		if (vm->processes[i] == vm->nil) {
+		if (vm->processes[i] == nil) {
 			vm->processes[i] = proc;
 			return i;
 		}
@@ -34,13 +39,13 @@ int vm_attach_process(vm_t *vm, value_t *proc) {
 }
 
 
-void debug_print_elts(value_t const* nil, value_t const *val) {
+void debug_print_elts(value_t const *val) {
 	if(val == nil) {
 		return;
 	}
 
 	// Print head of cons
-	debug_print_value(nil, val->cons[0]);
+	debug_print_value(val->cons[0]);
 
 	if(val->cons[1] == nil) {
 		return;
@@ -50,14 +55,14 @@ void debug_print_elts(value_t const* nil, value_t const *val) {
 	
 	if(val->cons[1]->type != VT_CONS) {
 		printf(". ");
-		debug_print_value(nil, val->cons[1]);
+		debug_print_value(val->cons[1]);
 		return;
 	} 
 
-	debug_print_elts(nil, val->cons[1]);
+	debug_print_elts(val->cons[1]);
 }
 
-void debug_print_value(value_t const* nil, value_t const *val) {
+void debug_print_value(value_t const *val) {
 
   switch(val->type) {
     case VT_NUMBER:
@@ -65,11 +70,14 @@ void debug_print_value(value_t const* nil, value_t const *val) {
 			break;
 		case VT_CONS:
 			printf("(");
-			debug_print_elts(nil, val);
+			debug_print_elts(val);
 			printf(")");
 			break;
-		case VT_SYMBOL:
+		case VT_STRING:
 			printf("#%s", (char const *)val->data);
+			break;
+		case VT_SYMBOL:
+			debug_print_value(val->cons[0]);
 			break;
 		default:
 			printf("unknown");
@@ -77,7 +85,7 @@ void debug_print_value(value_t const* nil, value_t const *val) {
   }
 }
 
-void debug_print_bytecode(value_t const* nil, bytecode_t *code) {
+void debug_print_bytecode(bytecode_t *code) {
 	switch(code->opcode) {
 		case OP_PUSH: printf("OP_PUSH: "); break;
 		case OP_POP: printf("OP_POP: "); break;
@@ -94,16 +102,16 @@ void debug_print_bytecode(value_t const* nil, bytecode_t *code) {
 		case OP_DUP: printf("OP_DUP: "); break;
 		default: printf("UNKNOWN OPCODE: "); break;
 	}
-	debug_print_value(nil, code->value);
+	debug_print_value(code->value);
 	printf("\n");
 }
 
-void debug_print_stack(value_t const* nil, process_t *proc) {
+void debug_print_stack(process_t *proc) {
   printf("sp: %d\n", proc->sp);
 	int sp = proc->sp;
   while(sp--) {
 		printf("%d] ", sp); 
-    debug_print_value(nil, proc->stack[sp]);
+    debug_print_value(proc->stack[sp]);
 		printf("\n");
   }
 }
@@ -127,7 +135,7 @@ void vm_exec(vm_t *vm) {
 		bytecode_t bc = bcp[proc->ip++];
 
     printf("ip: %d ] ", proc->ip);
-		debug_print_bytecode(vm->nil, &bc);
+		debug_print_bytecode(&bc);
 
 		value_t const **stack = proc->stack;
 
@@ -150,7 +158,7 @@ void vm_exec(vm_t *vm) {
         }
         break;
 			case OP_DUMP:
-				debug_print_stack(vm->nil, proc);
+				debug_print_stack(proc);
 				break;
 
 			case OP_CONS:

@@ -11,6 +11,8 @@ value_t const * value_create_nil();
 value_t const * value_create_cons(value_t const * hd, value_t const * tl);
 value_t const * value_create_bytecode(bytecode_t const *bc, int bc_len);
 value_t const * value_create_symbol(char const *name);
+value_t const * value_create_string(char const *name);
+
 value_t * value_create_process(value_t const *bytecode);
 
 #endif /* !defined(__VALUE_H_) */

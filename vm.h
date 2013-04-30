@@ -25,7 +25,6 @@ typedef enum {
 
 
 typedef struct {
-	value_t const * nil;
 	value_t **processes;
 } vm_t;
   

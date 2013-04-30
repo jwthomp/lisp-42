@@ -1,15 +1,21 @@
 #include "vm.h"
 #include "values/values.h"
+#include "process.h"
 
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
 	vm_t *v = vm_create(); 
+	value_t const *nil = value_create_nil();
+
 	bytecode_t bt[] = { 
-		{OP_PUSH, value_create_number(1)},
-		{OP_PUSH, value_create_symbol("foo")},
-		{OP_BIND, v->nil},
-		{OP_RET, v->nil} 
+	// Those are symbols
+	// Binding assigns them to something
+		{OP_PUSH, nil},
+		{OP_PUSH, nil},
+		{OP_CONS, nil},
+		{OP_DUMP, nil},
+		{OP_RET, nil} 
 	}; 
 
 	int bc_len = 17;
@@ -18,6 +24,8 @@ int main(int argc, char *argv[]) {
 
 	value_t *proc = value_create_process(bc);
 	printf("proc: %p\n", proc);
+
+	process_create_symbol(proc, "nil");
 
 	vm_attach_process(v, proc);
 
