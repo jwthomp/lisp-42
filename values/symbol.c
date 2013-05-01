@@ -5,10 +5,14 @@
 #include <stdlib.h>
 
 value_t const * value_create_symbol(char const *name) { 
-	int name_len = strlen(name) + 1;
-	value_t * val = (value_t *)malloc(sizeof(value_t) + name_len);
+	value_t const * str = value_create_string(name);
+	value_t const * nil = value_create_nil();
+
+	value_t * val = (value_t *)malloc(sizeof(value_t) + (sizeof(value_t *) * 3));
 	val->type = VT_SYMBOL; 
-	memcpy((void *)val->data, name, name_len);
+	val->cons[0] = str;
+	val->cons[1] = nil;
+	val->cons[2] = nil;
 
 	return (value_t const *)val;
 }

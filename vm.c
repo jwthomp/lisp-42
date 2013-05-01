@@ -77,7 +77,7 @@ void debug_print_value(value_t const *val) {
 			printf("\"%s\"", (char const *)val->data);
 			break;
 		case VT_SYMBOL:
-			printf("%s", (char const *)val->data);
+			printf("%s", (char const *)val->cons[0]->data);
 			break;
 		default:
 			printf("unknown");
