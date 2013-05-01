@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
 
 	value_t *proc = value_create_process(bc);
 	printf("proc: %p\n", proc);
+	process_print_symbols(proc);
 
 	process_create_symbol(proc, "nil");
 	process_create_symbol(proc, "+");

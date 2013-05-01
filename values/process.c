@@ -18,7 +18,7 @@ value_t *value_create_process(value_t const * bytecode) {
 	data->sp = 0;
 	data->ip = 0;
 	data->stack = (value_t const **) malloc(sizeof(value_t *) * 64);
-	data->symbols = (value_t const *) 0;
+	data->symbols = value_create_nil();
 	data->bc = bytecode;
 
 	return proc;
@@ -28,12 +28,7 @@ value_t *value_create_process(value_t const * bytecode) {
 value_t const *process_add_symbol(value_t *process, value_t const* symbol) {
 	process_t *proc_data = (process_t *)process->data;
 
-	if (proc_data->symbols == 0) {
-		value_t const *nil = value_create_nil();
-		proc_data->symbols = value_create_cons(symbol, nil);
-	} else {
-		proc_data->symbols = value_create_cons(symbol, proc_data->symbols);
-	}
+	proc_data->symbols = value_create_cons(symbol, proc_data->symbols);
 
 	return symbol;
 }
