@@ -74,10 +74,10 @@ void debug_print_value(value_t const *val) {
 			printf(")");
 			break;
 		case VT_STRING:
-			printf("#%s", (char const *)val->data);
+			printf("\"%s\"", (char const *)val->data);
 			break;
 		case VT_SYMBOL:
-			debug_print_value(val->cons[0]);
+			printf("%s", (char const *)val->data);
 			break;
 		default:
 			printf("unknown");

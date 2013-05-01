@@ -12,6 +12,7 @@
 value_t *value_create_process(value_t const * bytecode) {
 	value_t *proc = (value_t *)malloc(sizeof(value_t) + sizeof(process_t));
 	proc->type = VT_PROCESS;
+
 	process_t *data = (process_t *)proc->data;
 	data->bp = -1;
 	data->sp = 0;
@@ -26,9 +27,9 @@ value_t *value_create_process(value_t const * bytecode) {
 
 value_t const *process_add_symbol(value_t *process, value_t const* symbol) {
 	process_t *proc_data = (process_t *)process->data;
-	value_t const *nil = value_create_nil();
 
-	if (proc_data->symbols == nil) {
+	if (proc_data->symbols == 0) {
+		value_t const *nil = value_create_nil();
 		proc_data->symbols = value_create_cons(symbol, nil);
 	} else {
 		proc_data->symbols = value_create_cons(symbol, proc_data->symbols);
@@ -45,6 +46,12 @@ value_t const *process_create_symbol(value_t *process, char const *name) {
 
 void process_print_symbols(value_t *process) {
 	process_t *proc_data = (process_t *)process->data;
+
+	printf("Symbols For Proc: %p\n", process);
+	printf("-------------------\n");
+
 	debug_print_value(proc_data->symbols);
+	printf("\n");
+	printf("-------------------\n");
 }
 
