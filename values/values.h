@@ -13,6 +13,6 @@ value_t const * value_create_bytecode(bytecode_t const *bc, int bc_len);
 value_t const * value_create_symbol(char const *name);
 value_t const * value_create_string(char const *name);
 
-value_t * value_create_process(value_t const *bytecode);
+value_t * value_create_process();
 
 #endif /* !defined(__VALUE_H_) */

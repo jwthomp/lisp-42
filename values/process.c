@@ -19,8 +19,14 @@ value_t *value_create_process(value_t const * bytecode) {
 	data->ip = 0;
 	data->stack = (value_t const **) malloc(sizeof(value_t *) * 64);
 	data->symbols = value_create_nil();
-	data->bc = bytecode;
+	data->bc = value_create_nil();
 
+	return proc;
+}
+
+value_t *process_attach_bytecode(value_t * proc, value_t const * bytecode) {
+	process_t *data = (process_t *)proc->data;
+	data->bc = bytecode;
 	return proc;
 }
 
@@ -45,8 +51,17 @@ void process_print_symbols(value_t *process) {
 	printf("Symbols For Proc: %p\n", process);
 	printf("-------------------\n");
 
-	debug_print_value(proc_data->symbols);
-	printf("\n");
+	value_t const *nil = value_create_nil();
+	value_t const *cons = proc_data->symbols;
+	while (cons != nil) {
+		value_t const *sym = cons->cons[0];
+		debug_print_value(sym->cons[0]);
+		printf("\n Dynamic Bindings \n");
+		debug_print_value(sym->cons[1]);
+		printf("\n");
+		cons = cons->cons[1];
+	}
+	
 	printf("-------------------\n");
 }
 

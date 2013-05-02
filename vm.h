@@ -9,6 +9,7 @@
 typedef enum {
   OP_PUSH,
   OP_POP,
+	OP_PUSH_SYM,
   OP_JMP,
   OP_CALL,
   OP_RET,

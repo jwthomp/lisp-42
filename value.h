@@ -19,7 +19,7 @@ typedef struct value_s {
 		// VT_CONS(2)-> [0] car, [1] cdr 
 		// VT_SYMBOL(4)-> [0] name, [1] next symbol in symbol table, [2] lexical bind, [3] dynamic bind
 		// 
-		struct value_s const *cons[0]; 
+		struct value_s const * cons[0]; 
 	};
 } value_t;
 
