@@ -5,22 +5,32 @@ OBJECTS=${SOURCES:.c=.o}
 CC=gcc
 EXECUTABLE=vlisp
 WEBHTML=vlisp.html
+ODIR=$(PWD)/objs
+DEPS := value.h values/values.h vm.h
 
+OBJ = $(patsubst %,$(ODIR)/%,$(OBJECTS))
+
+all: init
 all: local 
+
+
+init:
+	mkdir -p $(PWD)/objs/values
 
 local: CC=clang
 local: CFLAGS:=-g -c -Wall
 local: LDFLAGS= 
 local: value.h values/values.h vm.h
-local: $(SOURCES) $(EXECUTABLE)
+local: $(EXECUTABLE)
+local: $(EXECUTABLE)
 
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+$(EXECUTABLE): $(OBJ)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
-	
+$(ODIR)/%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
 
 #web: CC=clang
 #web: CCFLAGS=-S -emit-llvm
@@ -34,6 +44,7 @@ web:
 clean:
 	@echo "Cleaning..."
 	@rm -f *.html *.bc *.s *.ll *.o vlisp
-	@rm -f values/*.html values/*.bc values/*.s values/*.ll values/*.o
+	@rm -rf objs
+	@rm -f values/*.o
 
 .PHONY: all clean local
