@@ -103,6 +103,7 @@ void debug_print_bytecode(bytecode_t *code) {
 		case OP_BIND: printf("OP_BIND: "); break;
 		case OP_DUP: printf("OP_DUP: "); break;
 		case OP_ISNULL: printf("OP_ISNULL: "); break;
+		case OP_ISATOM: printf("OP_ISATOM: "); break;
 		default: printf("UNKNOWN OPCODE: "); break;
 	}
 	debug_print_value(code->value);
@@ -220,6 +221,14 @@ void vm_exec(vm_t *vm) {
 					stack[proc->sp - 1] = process_create_symbol(cur_proc, "#t");
 				} else {
 					stack[proc->sp - 1] = nil;
+				}
+				break;
+
+			case OP_ISATOM:
+				if (stack[proc->sp - 1]->type == VT_CONS) {
+					stack[proc->sp - 1] = nil;
+				} else {
+					stack[proc->sp - 1] = process_create_symbol(cur_proc, "#t");
 				}
 				break;
 				

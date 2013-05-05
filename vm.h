@@ -22,6 +22,7 @@ typedef enum {
 	OP_BIND,
 	OP_DUMP,
 	OP_ISNULL,
+	OP_ISATOM,
 } opcode_t;
 
 

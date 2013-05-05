@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 		{OP_PUSH, val},
 		{OP_PUSH, nil},
 		{OP_CONS, nil},
-		{OP_ISNULL, nil},
+		{OP_ISATOM, nil},
 		{OP_DUMP, nil},
 		{OP_RET, nil}
 	}; 
