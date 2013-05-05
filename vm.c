@@ -2,6 +2,7 @@
 
 #include "value.h"
 #include "values/values.h"
+#include "values/process.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -101,6 +102,7 @@ void debug_print_bytecode(bytecode_t *code) {
 		case OP_EQ: printf("OP_EQ: "); break;
 		case OP_BIND: printf("OP_BIND: "); break;
 		case OP_DUP: printf("OP_DUP: "); break;
+		case OP_ISNULL: printf("OP_ISNULL: "); break;
 		default: printf("UNKNOWN OPCODE: "); break;
 	}
 	debug_print_value(code->value);
@@ -211,7 +213,15 @@ void vm_exec(vm_t *vm) {
 				proc->sp -= 2;
 				stack[proc->sp++] = val1 == val2 ? value_create_number(1) : value_create_number(0);
 				break;
-			
+
+			case OP_ISNULL:
+				val1 = stack[proc->sp - 1];
+				if (val1 == nil) {
+					stack[proc->sp - 1] = process_create_symbol(cur_proc, "#t");
+				} else {
+					stack[proc->sp - 1] = nil;
+				}
+				break;
 				
       case OP_NOP:
         break;

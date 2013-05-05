@@ -19,17 +19,11 @@ int main(int argc, char *argv[]) {
 	// Those are symbols
 	// Binding assigns them to something
 		{OP_PUSH, val},
-		{OP_PUSH, value_create_number(1)},
-		{OP_BIND, nil}, 
-		{OP_PUSH, val2},
-		{OP_PUSH, value_create_number(2)},
-		{OP_BIND, nil}, 
-		{OP_PUSH, val},
-		{OP_LOAD, nil},
-		{OP_PUSH, val2},
-		{OP_LOAD, nil},
+		{OP_PUSH, nil},
+		{OP_CONS, nil},
+		{OP_ISNULL, nil},
 		{OP_DUMP, nil},
-		{OP_RET, nil} 
+		{OP_RET, nil}
 	}; 
 
 

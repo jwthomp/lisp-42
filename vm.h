@@ -20,7 +20,8 @@ typedef enum {
 	OP_DUP,
 	OP_EQ,
 	OP_BIND,
-	OP_DUMP
+	OP_DUMP,
+	OP_ISNULL,
 } opcode_t;
 
 
