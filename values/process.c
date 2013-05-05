@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 
@@ -40,8 +41,28 @@ value_t const *process_add_symbol(value_t *process, value_t const* symbol) {
 }
 
 value_t const *process_create_symbol(value_t *process, char const *name) {
-	value_t const *symbol = value_create_symbol(name);
-	process_add_symbol(process, symbol);
+	// First check if this symbol already exists..
+	process_t *proc_data = (process_t *)process->data;
+	value_t const *nil = value_create_nil();
+	value_t const *cons = proc_data->symbols;
+	value_t const *symbol = nil;
+
+	while(cons != nil) {
+		if (!strcmp(name, cons->cons[0]->cons[0]->data)) {
+			symbol = cons->cons[0];
+			break;
+		}
+
+		cons = cons->cons[1];
+	}
+
+	if (symbol == nil) {
+		symbol = value_create_symbol(name);
+		process_add_symbol(process, symbol);
+	}
+	
+
+	// Otherwise create a new one
 	return symbol;
 }
 

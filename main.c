@@ -10,13 +10,24 @@ int main(int argc, char *argv[]) {
 
 	value_t *proc = value_create_process();
 
+	value_t const *val = process_create_symbol(proc, "val");
+	value_t const *val2 = process_create_symbol(proc, "val");
+
+	printf("val: %p =? val2: %p\n", val, val2);
+
 	bytecode_t bt[] = { 
 	// Those are symbols
 	// Binding assigns them to something
-		{OP_PUSH, process_create_symbol(proc, "nil")},
-		{OP_PUSH, process_create_symbol(proc, "val")},
+		{OP_PUSH, val},
 		{OP_PUSH, value_create_number(1)},
 		{OP_BIND, nil}, 
+		{OP_PUSH, val2},
+		{OP_PUSH, value_create_number(2)},
+		{OP_BIND, nil}, 
+		{OP_PUSH, val},
+		{OP_LOAD, nil},
+		{OP_PUSH, val2},
+		{OP_LOAD, nil},
 		{OP_DUMP, nil},
 		{OP_RET, nil} 
 	}; 

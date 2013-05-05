@@ -88,8 +88,8 @@ void debug_print_value(value_t const *val) {
 void debug_print_bytecode(bytecode_t *code) {
 	switch(code->opcode) {
 		case OP_PUSH: printf("OP_PUSH: "); break;
-		case OP_PUSH_SYM: printf("OP_PUSH_SYM: "); break;
 		case OP_POP: printf("OP_POP: "); break;
+		case OP_LOAD: printf("OP_LOAD: "); break;
   	case OP_JMP: printf("OP_JMP: "); break;
   	case OP_CALL: printf("OP_CALL: "); break;
   	case OP_RET: printf("OP_RET: "); break;
@@ -186,18 +186,19 @@ void vm_exec(vm_t *vm) {
 				val2 = stack[proc->sp - 2];
 				proc->sp -= 2;
 
-				printf("val1: "); debug_print_value(val1); printf("\n");
-				printf("val2: "); debug_print_value(val2); printf("\n");
-
 				// Currently only supporting dynamic binding
 				{
 					value_t *sym = (value_t *)val2;
 					sym->cons[1] = value_create_cons(val1, sym->cons[1]);
 				}
 
-				
-
 				break;
+
+			case OP_LOAD:
+				// Dynamic value is stored at the head of the cons[1] list
+				stack[proc->sp - 1] = stack[proc->sp - 1]->cons[1]->cons[0];
+				break;
+				
 
 			case OP_DUP:
 				val1 = stack[proc->sp - 1];
